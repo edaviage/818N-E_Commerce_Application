@@ -1,0 +1,30 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: CloudFront CDN Template
+
+Parameters:
+  LoadBalancerDNSName:
+    Description: DNS Name of the Load Balancer
+    Type: String
+
+Resources:
+  CloudFrontDistribution:
+    Type: AWS::CloudFront::Distribution
+    Properties:
+      DistributionConfig:
+        Origins:
+          - DomainName: !Ref LoadBalancerDNSName
+            Id: EcommerceOrigin
+        Enabled: true
+        DefaultCacheBehavior:
+          TargetOriginId: EcommerceOrigin
+          ViewerProtocolPolicy: redirect-to-https
+          ForwardedValues:
+            QueryString: false
+        ViewerCertificate:
+          AcmCertificateArn: <Your-ACM-Certificate-ARN>
+          SslSupportMethod: sni-only
+
+Outputs:
+  CloudFrontDistributionId:
+    Description: The ID of the CloudFront distribution
+    Value: !Ref CloudFrontDistribution

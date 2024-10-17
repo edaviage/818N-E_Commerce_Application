@@ -1,0 +1,75 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: RDS Template for E-commerce Platform
+
+Parameters:
+  VPCId:
+    Type: String
+    Description: The VPC ID where RDS will be deployed.
+
+  PrivateSubnetId:
+    Type: String
+    Description: The private subnet ID for RDS.
+
+  DBUser:
+    Description: The database admin account username
+    Type: String
+    MinLength: 1
+    MaxLength: 16
+    Default: admin
+
+  DBPassword:
+    Description: The database admin account password
+    Type: String
+    NoEcho: true
+    MinLength: 8
+    MaxLength: 41
+
+  DBName:
+    Description: The database name
+    Type: String
+    Default: ecommerceDB
+
+  DBInstanceClass:
+    Description: The RDS instance type
+    Type: String
+    Default: db.t2.micro
+
+Resources:
+  RDSSecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: Enable MySQL access
+      VpcId: !Ref VPCId
+      SecurityGroupIngress:
+        - IpProtocol: tcp
+          FromPort: 3306
+          ToPort: 3306
+          CidrIp: 0.0.0.0/0
+
+  RDSInstance:
+    Type: AWS::RDS::DBInstance
+    Properties:
+      AllocatedStorage: 20
+      DBInstanceClass: !Ref DBInstanceClass
+      Engine: MySQL
+      MasterUsername: !Ref DBUser
+      MasterUserPassword: !Ref DBPassword
+      DBName: !Ref DBName
+      MultiAZ: true
+      StorageEncrypted: true
+      BackupRetentionPeriod: 7
+      VPCSecurityGroups:
+        - !Ref RDSSecurityGroup
+      DBSubnetGroupName: !Ref DBSubnetGroup
+
+  DBSubnetGroup:
+    Type: AWS::RDS::DBSubnetGroup
+    Properties:
+      DBSubnetGroupDescription: Subnet group for RDS
+      SubnetIds:
+        - !Ref PrivateSubnetId
+
+Outputs:
+  RDSInstanceEndpoint:
+    Description: The endpoint address of the RDS instance
+    Value: !GetAtt RDSInstance.Endpoint.Address
