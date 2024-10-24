@@ -1,5 +1,6 @@
 <?php
 include('../includes/connect.php');
+include('../config.php');
 if(isset($_POST['insert_product'])){
     $product_title=$_POST['product_title'];
     $product_description=$_POST['product_description'];
@@ -41,8 +42,8 @@ if(isset($_POST['insert_product'])){
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Insert Products - Admin Dashboard</title>
-    <link rel="stylesheet" href="../assets/css/bootstrap.css" />
-    <link rel="stylesheet" href="../assets/css/main.css" />
+    <link rel="stylesheet" href="<?php echo $static_base_url; ?>/assets/css/bootstrap.css" />
+    <link rel="stylesheet" href="<?php echo $static_base_url; ?>/assets/css/main.css" />
 </head>
 
 <body>

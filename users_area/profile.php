@@ -1,6 +1,7 @@
 <?php
 include("../includes/connect.php");
 include("../functions/common_functions.php");
+include("../config.php");
 session_start();
 if(!isset($_SESSION['username'])){
     header('location:user_login.php');
@@ -13,8 +14,8 @@ if(!isset($_SESSION['username'])){
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title><?php echo $_SESSION['username'];?> Profile</title>
-    <link rel="stylesheet" href="../assets/css/bootstrap.css" />
-    <link rel="stylesheet" href="../assets/css/main.css" />
+    <link rel="stylesheet" href="<?php echo $static_base_url; ?>/assets/css/bootstrap.css" />
+    <link rel="stylesheet" href="<?php echo $static_base_url; ?>/assets/css/main.css" />
 </head>
 
 <body>
@@ -220,7 +221,7 @@ if(!isset($_SESSION['username'])){
     </div> -->
     <!-- End Footer -->
 
-    <script src="../assets/js/bootstrap.bundle.js"></script>
+    <script src="<?php echo $static_base_url; ?>/assets/js/bootstrap.bundle.js"></script>
 </body>
 
 </html>
