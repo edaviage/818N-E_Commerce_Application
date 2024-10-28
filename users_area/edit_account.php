@@ -1,4 +1,8 @@
 <?php
+
+include('../includes/session_handler.php');
+include('../includes/connect.php');
+
 if(isset($_GET['edit_account'])){
     $user_session_name = $_SESSION['username'];
     $select_user_query = "SELECT * FROM `user_table` WHERE username='$user_session_name'";

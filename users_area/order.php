@@ -1,7 +1,7 @@
 <?php
 include('../includes/connect.php');
 include('../functions/common_functions.php');
-// session_start();
+// include('../includes/session_handler.php');
 if(isset($_GET['user_id'])){
     $user_id = $_GET['user_id'];
 

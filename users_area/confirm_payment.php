@@ -1,7 +1,7 @@
 <?php
 include("../includes/connect.php");
 include("../functions/common_functions.php");
-session_start();
+include('../includes/session_handler.php');
 if (isset($_GET['order_id'])) {
     $order_id = $_GET['order_id'];
     $select_order_query = "SELECT * FROM `user_orders` WHERE order_id = '$order_id'";

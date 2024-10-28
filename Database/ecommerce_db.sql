@@ -25,6 +25,17 @@ use ecommerce_db;
 -- --------------------------------------------------------
 
 --
+-- Table for User Login Session
+--
+CREATE TABLE EXISTS `user_sessions` (
+  `session_id` varchar(128) NOT NULL,
+  `access` int(10) unsigned NOT NULL,
+  `data` text NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+
+--
 -- Table structure for table `admin_table`
 --
 

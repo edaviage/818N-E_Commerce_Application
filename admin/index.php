@@ -1,7 +1,7 @@
 <?php
     include('../includes/connect.php');
     include('../functions/common_functions.php');
-    session_start();
+    include('../includes/session_handler.php');
     if(isset($_SESSION['admin_username'])){
         $admin_name = $_SESSION['admin_username'];
         $get_admin_data = "SELECT * FROM `admin_table` WHERE admin_name = '$admin_name'";
