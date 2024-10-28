@@ -2,6 +2,13 @@
 include('../includes/connect.php');
 include('../functions/common_functions.php');
 include('../includes/session_handler.php');
+
+// Include the AWS SDK for PHP
+require_once __DIR__ . '/../vendor/autoload.php';
+
+use Aws\S3\S3Client;
+use Aws\Exception\AwsException;
+
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -76,34 +83,80 @@ include('../includes/session_handler.php');
 </body>
 
 </html>
-<!-- php code  -->
+<!-- PHP Code -->
 <?php
 if (isset($_POST['admin_register'])) {
+    // Get form data
     $username = $_POST['username'];
     $email = $_POST['email'];
     $password = $_POST['password'];
-    $hash_password = password_hash($password,PASSWORD_DEFAULT);
     $conf_password = $_POST['conf_password'];
-    $image = $_FILES['admin_image']['name'];
-    $image_tmp = $_FILES['admin_image']['tmp_name'];
-    // check if user exist or not
-    $select_query = "SELECT * FROM `admin_table` WHERE admin_name='$username' OR admin_email='$email'";
-    $select_result = mysqli_query($con, $select_query);
+
+    // Validate password match
+    if ($password != $conf_password) {
+        echo "<script>window.alert('Passwords do not match');</script>";
+        exit();
+    }
+
+    // Check if username or email already exists
+    $select_query = "SELECT * FROM `admin_table` WHERE admin_name = ? OR admin_email = ?";
+    $stmt = mysqli_prepare($con, $select_query);
+    mysqli_stmt_bind_param($stmt, 'ss', $username, $email);
+    mysqli_stmt_execute($stmt);
+    $select_result = mysqli_stmt_get_result($stmt);
     $rows_count = mysqli_num_rows($select_result);
+
     if ($rows_count > 0) {
-        echo "<script>window.alert('Username | Email already exist');</script>";
-    } else if ($password != $conf_password) {
-        echo "<script>window.alert('Passwords are not match');</script>";
-    } else {
-        // insert query
-        move_uploaded_file($image_tmp, "./admin_images/$image");
-        $insert_query = "INSERT INTO `admin_table` (admin_name,admin_email,admin_image,admin_password) VALUES ('$username','$email','$image','$hash_password')";
-        $insert_result = mysqli_query($con, $insert_query);
-        if ($insert_result) {
-            echo "<script>window.alert('Admin added successfully');</script>";
-        } else {
-            die(mysqli_error($con));
+        echo "<script>window.alert('Username or Email already exist');</script>";
+        exit();
+    }
+
+    // Hash the password
+    $hash_password = password_hash($password, PASSWORD_DEFAULT);
+
+    // Handle image upload
+    if (isset($_FILES['admin_image']) && $_FILES['admin_image']['error'] == 0) {
+        // Instantiate the S3 client
+        $s3 = new S3Client([
+            'version' => 'latest',
+            'region'  => AWS_REGION,
+        ]);
+
+        $image_name = $_FILES['admin_image']['name'];
+        $image_tmp = $_FILES['admin_image']['tmp_name'];
+        $image_extension = pathinfo($image_name, PATHINFO_EXTENSION);
+
+        // Generate a unique file name
+        $filename = uniqid('IMG_', true) . '.' . $image_extension;
+
+        try {
+            // Upload data to S3
+            $result = $s3->putObject([
+                'Bucket' => S3_BUCKET,
+                'Key'    => '/admin/admin_images/' . $filename,
+                'SourceFile' => $image_tmp,
+            ]);
+
+            // Insert user into database
+            $insert_query = "INSERT INTO `admin_table` (admin_name, admin_email, admin_image, admin_password) VALUES (?, ?, ?, ?)";
+            $stmt = mysqli_prepare($con, $insert_query);
+            mysqli_stmt_bind_param($stmt, 'ssss', $username, $email, $filename, $hash_password);
+            $insert_result = mysqli_stmt_execute($stmt);
+
+            if ($insert_result) {
+                echo "<script>window.alert('Admin Registration Successful!');</script>";
+                $_SESSION['admin_username'] = $username;
+                echo "<script>window.open('./index.php', '_self');</script>";
+            } else {
+                die(mysqli_error($con));
+            }
+        } catch (AwsException $e) {
+            // Output error message if fails
+            error_log("S3 Upload Error: " . $e->getMessage());
+            echo "<script>window.alert('Failed to upload image. Please try again.');</script>";
         }
+    } else {
+        echo "<script>window.alert('Please select an image to upload');</script>";
     }
 }
 ?>

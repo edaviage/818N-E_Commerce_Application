@@ -2,13 +2,16 @@
     include('../includes/connect.php');
     include('../functions/common_functions.php');
     include('../includes/session_handler.php');
-    if(isset($_SESSION['admin_username'])){
+    if (isset($_SESSION['admin_username'])) {
         $admin_name = $_SESSION['admin_username'];
-        $get_admin_data = "SELECT * FROM `admin_table` WHERE admin_name = '$admin_name'";
-        $get_admin_result = mysqli_query($con,$get_admin_data);
-        $row_fetch_admin_data = mysqli_fetch_array($get_admin_result);
-        $admin_name = $row_fetch_admin_data['admin_name'];
-        $admin_image = $row_fetch_admin_data['admin_image'];
+        $select_query = "SELECT * FROM `admin_table` WHERE admin_name = ?";
+        $stmt = mysqli_prepare($con, $select_query);
+        mysqli_stmt_bind_param($stmt, 's', $admin_name);
+        mysqli_stmt_execute($stmt);
+        $select_result = mysqli_stmt_get_result($stmt);
+        $admin_name = $select_result['admin_name'];
+        $admin_image = $select_result['admin_image'];
+        $admin_image_url = '/admin/admin_images/' . urlencode($admin_image);
     }else{
         echo "<script>window.open('./admin_login.php','_self');</script>";
     }
@@ -66,7 +69,7 @@
             <div class="row align-items-center">
                 <div class="col-md-2">
                     <div class="admin-image">
-                        <a href="./index.php"><img src="./admin_images/<?php echo $admin_image;?>" class="img-thumbnail" alt="Admin Photo"></a>
+                        <a href="./index.php"><img src="<?php echo $admin_image_url;?>" class="img-thumbnail" alt="Admin Photo"></a>
                         <p><?php echo $admin_name;?></p>
                     </div>
                 </div>

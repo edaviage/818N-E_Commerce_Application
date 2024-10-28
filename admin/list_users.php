@@ -1,13 +1,6 @@
 <?php
 include("../includes/connect.php");
 include_once("../includes/session_handler.php");
-
-// Include the AWS SDK for PHP
-require_once __DIR__ . '/../vendor/autoload.php';
-
-use Aws\S3\S3Client;
-use Aws\Exception\AwsException;
-
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -55,12 +48,6 @@ use Aws\Exception\AwsException;
             } else {
                 $id_number = 1;
 
-                // Instantiate the S3 client outside the loop
-                $s3 = new S3Client([
-                    'version' => 'latest',
-                    'region'  => AWS_REGION,
-                ]);
-
                 while ($row_fetch_users = mysqli_fetch_array($get_user_result)) {
                     $user_id = $row_fetch_users['user_id'];
                     $username = $row_fetch_users['username'];
@@ -69,25 +56,10 @@ use Aws\Exception\AwsException;
                     $user_address = $row_fetch_users['user_address'];
                     $user_mobile = $row_fetch_users['user_mobile'];
 
-                    // Generate the image URL from S3
                     if ($user_image_key) {
-                        try {
-                            $cmd = $s3->getCommand('GetObject', [
-                                'Bucket' => S3_BUCKET,
-                                'Key'    => $user_image_key,
-                            ]);
-
-                            $request = $s3->createPresignedRequest($cmd, '+20 minutes');
-
-                            // Get the pre-signed URL
-                            $user_image_url = (string)$request->getUri();
-                        } catch (AwsException $e) {
-                            // Output error message if fails
-                            error_log("S3 GetObject Error: " . $e->getMessage());
-                            $user_image_url = 'path/to/default/image.jpg'; // Default image if error occurs
-                        }
+                        $user_image_url = '/users_area/user_images/' . urlencode($user_image_key);
                     } else {
-                        $user_image_url = './user_images/profile.png'; // Default image if none exists
+                        $user_image_url = '/users_area/user_images/profile.png'; // Default image if none exists
                     }
 
                     echo "
