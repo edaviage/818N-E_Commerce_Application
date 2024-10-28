@@ -9,8 +9,9 @@
         mysqli_stmt_bind_param($stmt, 's', $admin_name);
         mysqli_stmt_execute($stmt);
         $select_result = mysqli_stmt_get_result($stmt);
-        $admin_name = $select_result['admin_name'];
-        $admin_image = $select_result['admin_image'];
+        $row = $select_result->fetch_array(MYSQLI_ASSOC);
+        $admin_name = $row['admin_name'];
+        $admin_image = $row['admin_image'];
         $admin_image_url = '/admin/admin_images/' . urlencode($admin_image);
     }else{
         echo "<script>window.open('./admin_login.php','_self');</script>";
