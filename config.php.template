@@ -1,11 +1,8 @@
 <?php
-define('DB_SERVER', '${DBEndpoint}');
+define('DB_SERVER', '$DBEndpoint');
 define('DB_USERNAME', '$DBUSER');
 define('DB_PASSWORD', '$DBPASS');
-define('DB_NAME', '${DBName}');
-
-// AWS constants
+define('DB_NAME', '$DBName');
 define('AWS_REGION', '$REGION');
 define('S3_BUCKET', '$S3_BUCKET_NAME');
-define('CLOUDFRONT_DOMAIN', '$CLOUDFRONT_DOMAIN'); // Replace with your CloudFront domain
 ?>
