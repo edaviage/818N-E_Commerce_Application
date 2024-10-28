@@ -1,4 +1,10 @@
 <?php
+    // Include the AWS SDK for PHP
+    require_once __DIR__ . '/../vendor/autoload.php';
+
+    use Aws\S3\S3Client;
+    use Aws\Exception\AwsException;
+
     // fetch all data
     if(isset($_GET['edit_product'])){
         $edit_id = $_GET['edit_product'];
@@ -35,9 +41,32 @@
         if(empty($product_title) || empty($product_description) || empty($product_keywords) || empty($product_category_id) || empty($product_brand_id) || empty($product_image_one) || empty($product_image_two) || empty($product_image_three) || empty($product_price)){
             echo "<script>window.alert('Please fill all fields');</script>";
         }else{
-            move_uploaded_file($product_image_one_tmp,"./product_images/$product_image_one");
-            move_uploaded_file($product_image_two_tmp,"./product_images/$product_image_two");
-            move_uploaded_file($product_image_three_tmp,"./product_images/$product_image_three");
+            // Upload files to S3
+            $s3 = new S3Client([
+                'version' => 'latest',
+                'region'  => AWS_REGION,
+            ]);
+            try {
+                $s3->putObject([
+                    'Bucket' => S3_BUCKET,
+                    'Key'    => '/admin/admin_images/' . $product_image_one,
+                    'SourceFile' => $product_image_one_tmp,
+                ]);
+                $s3->putObject([
+                    'Bucket' => S3_BUCKET,
+                    'Key'    => '/admin/admin_images/' . $product_image_two,
+                    'SourceFile' => $product_image_two_tmp,
+                ]);
+                $s3->putObject([
+                    'Bucket' => S3_BUCKET,
+                    'Key'    => '/admin/admin_images/' . $product_image_three,
+                    'SourceFile' => $product_image_three_tmp,
+                ]);
+            } catch (AwsException $e) {
+                // Output error message if fails
+                error_log("S3 Upload Error: " . $e->getMessage());
+                echo "<script>window.alert('Failed to upload image(s). Please try again.');</script>";
+            }
             // update query 
             $update_product_query = "UPDATE `products` SET category_id=$product_category_id,brand_id=$product_brand_id,product_title='$product_title',product_description='$product_description',product_keywords='$product_keywords',product_image_one='$product_image_one',product_image_two='$product_image_two',product_image_three='$product_image_three',product_price='$product_price',date=NOW() WHERE product_id = $edit_id";
             $update_product_result = mysqli_query($con,$update_product_query);

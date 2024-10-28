@@ -1,5 +1,12 @@
 <?php
 include('../includes/connect.php');
+
+// Include the AWS SDK for PHP
+require_once __DIR__ . '/../vendor/autoload.php';
+
+use Aws\S3\S3Client;
+use Aws\Exception\AwsException;
+
 if(isset($_POST['insert_product'])){
     $product_title=$_POST['product_title'];
     $product_description=$_POST['product_description'];
@@ -21,10 +28,32 @@ if(isset($_POST['insert_product'])){
         echo "<script>alert(\"Fields should not be empty\");</script>";
         exit();
     }else{
-        //move folders
-        move_uploaded_file($temp_image_one,"./product_images/$product_image_one");
-        move_uploaded_file($temp_image_two,"./product_images/$product_image_two");
-        move_uploaded_file($temp_image_three,"./product_images/$product_image_three");
+        // Upload files to S3
+        $s3 = new S3Client([
+            'version' => 'latest',
+            'region'  => AWS_REGION,
+        ]);
+        try {
+            $s3->putObject([
+                'Bucket' => S3_BUCKET,
+                'Key'    => '/admin/admin_images/' . $product_image_one,
+                'SourceFile' => $temp_image_one,
+            ]);
+            $s3->putObject([
+                'Bucket' => S3_BUCKET,
+                'Key'    => '/admin/admin_images/' . $product_image_two,
+                'SourceFile' => $temp_image_two,
+            ]);
+            $s3->putObject([
+                'Bucket' => S3_BUCKET,
+                'Key'    => '/admin/admin_images/' . $product_image_three,
+                'SourceFile' => $temp_image_three,
+            ]);
+        } catch (AwsException $e) {
+            // Output error message if fails
+            error_log("S3 Upload Error: " . $e->getMessage());
+            echo "<script>window.alert('Failed to upload image(s). Please try again.');</script>";
+        }
         //insert query in db
         $insert_query = "INSERT INTO `products` (product_title,product_description,product_keywords,category_id,brand_id,product_image_one,product_image_two,product_image_three,product_price,date,status) VALUES ('$product_title','$product_description','$product_keywords','$product_category','$product_brand','$product_image_one','$product_image_two','$product_image_three','$product_price',NOW(),'$product_status')";
         $insert_result=mysqli_query($con,$insert_query);
