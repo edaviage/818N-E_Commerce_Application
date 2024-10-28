@@ -1,6 +1,6 @@
 <?php
-include('../includes/session_handler.php');
 include('../includes/connect.php');
+include('../includes/session_handler.php');
 include('../functions/common_functions.php');
 ?>
 <!DOCTYPE html>

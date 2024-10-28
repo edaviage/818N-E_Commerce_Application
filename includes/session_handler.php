@@ -1,4 +1,7 @@
 <?php
+// Include the database connection
+include_once __DIR__ . '/connect.php';
+
 class SessionHandlerDB implements SessionHandlerInterface {
     private $db;
 

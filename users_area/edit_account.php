@@ -1,7 +1,7 @@
 <?php
 
-include('../includes/session_handler.php');
 include('../includes/connect.php');
+include('../includes/session_handler.php');
 
 if(isset($_GET['edit_account'])){
     $user_session_name = $_SESSION['username'];
