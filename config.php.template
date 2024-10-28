@@ -3,6 +3,10 @@ define('DB_SERVER', '$DBEndpoint');
 define('DB_USERNAME', '$DBUSER');
 define('DB_PASSWORD', '$DBPASS');
 define('DB_NAME', '$DBName');
-define('AWS_REGION', '$REGION');
-define('S3_BUCKET', '$S3_BUCKET_NAME');
+if (!defined('AWS_REGION')) {
+    define('AWS_REGION', '$REGION');
+}
+if (!defined('S3_BUCKET')) {
+    define('S3_BUCKET', '$S3_BUCKET_NAME');
+}
 ?>

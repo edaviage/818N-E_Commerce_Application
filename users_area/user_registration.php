@@ -133,8 +133,7 @@ if (isset($_POST['user_register'])) {
             $result = $s3->putObject([
                 'Bucket' => S3_BUCKET,
                 'Key'    => $s3_key,
-                'SourceFile' => $user_image_tmp,
-                'ACL'    => 'public-read', // Optional: adjust according to your needs
+                'SourceFile' => $user_image_tmp
             ]);
 
             // Get the URL of the uploaded image
