@@ -36,17 +36,17 @@ if(isset($_POST['insert_product'])){
         try {
             $s3->putObject([
                 'Bucket' => S3_BUCKET,
-                'Key'    => '/admin/admin_images/' . $product_image_one,
+                'Key'    => 'admin/admin_images/' . $product_image_one,
                 'SourceFile' => $temp_image_one,
             ]);
             $s3->putObject([
                 'Bucket' => S3_BUCKET,
-                'Key'    => '/admin/admin_images/' . $product_image_two,
+                'Key'    => 'admin/admin_images/' . $product_image_two,
                 'SourceFile' => $temp_image_two,
             ]);
             $s3->putObject([
                 'Bucket' => S3_BUCKET,
-                'Key'    => '/admin/admin_images/' . $product_image_three,
+                'Key'    => 'admin/admin_images/' . $product_image_three,
                 'SourceFile' => $temp_image_three,
             ]);
         } catch (AwsException $e) {

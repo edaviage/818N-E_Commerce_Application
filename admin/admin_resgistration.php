@@ -133,7 +133,7 @@ if (isset($_POST['admin_register'])) {
             // Upload data to S3
             $result = $s3->putObject([
                 'Bucket' => S3_BUCKET,
-                'Key'    => '/admin/admin_images/' . $filename,
+                'Key'    => 'admin/admin_images/' . $filename,
                 'SourceFile' => $image_tmp,
             ]);
 

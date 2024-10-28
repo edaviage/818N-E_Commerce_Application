@@ -128,7 +128,7 @@ if (isset($_POST['user_register'])) {
             // Upload data to S3
             $result = $s3->putObject([
                 'Bucket' => S3_BUCKET,
-                'Key'    => '/users_area/user_images/' . $filename,
+                'Key'    => 'users_area/user_images/' . $filename,
                 'SourceFile' => $user_image_tmp,
             ]);
 

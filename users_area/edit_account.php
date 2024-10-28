@@ -52,7 +52,7 @@ if (isset($_POST['user_update'])) {
             // Upload data to S3
             $result = $s3->putObject([
                 'Bucket' => S3_BUCKET,
-                'Key'    => '/users_area/user_images/' . $filename,
+                'Key'    => 'users_area/user_images/' . $filename,
                 'SourceFile' => $update_image_tmp,
             ]);
 
