@@ -49,17 +49,17 @@
             try {
                 $s3->putObject([
                     'Bucket' => S3_BUCKET,
-                    'Key'    => 'admin/admin_images/' . $product_image_one,
+                    'Key'    => 'admin/product_images/' . $product_image_one,
                     'SourceFile' => $product_image_one_tmp,
                 ]);
                 $s3->putObject([
                     'Bucket' => S3_BUCKET,
-                    'Key'    => 'admin/admin_images/' . $product_image_two,
+                    'Key'    => 'admin/product_images/' . $product_image_two,
                     'SourceFile' => $product_image_two_tmp,
                 ]);
                 $s3->putObject([
                     'Bucket' => S3_BUCKET,
-                    'Key'    => 'admin/admin_images/' . $product_image_three,
+                    'Key'    => 'admin/product_images/' . $product_image_three,
                     'SourceFile' => $product_image_three_tmp,
                 ]);
             } catch (AwsException $e) {
