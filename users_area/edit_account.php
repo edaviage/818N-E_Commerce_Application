@@ -24,24 +24,10 @@ if (isset($_GET['edit_account'])) {
     $user_mobile = $row_user_fetch['user_mobile'];
     $user_image_key = $row_user_fetch['user_image']; // S3 object key
 
-    // Generate the image URL directly from S3
-    $s3 = new S3Client([
-        'version' => 'latest',
-        'region'  => AWS_REGION,
-    ]);
-
     if ($user_image_key) {
-        $cmd = $s3->getCommand('GetObject', [
-            'Bucket' => S3_BUCKET,
-            'Key'    => $user_image_key,
-        ]);
-
-        $request = $s3->createPresignedRequest($cmd, '+20 minutes');
-
-        // Get the pre-signed URL
-        $user_image_url = (string)$request->getUri();
+        $user_image_url = '/users_area/user_images/' . urlencode($user_image_key);
     } else {
-        $user_image_url = 'path/to/default/image.jpg'; // Default image if none exists
+        $user_image_url = '/users_area/user_images/profile.png'; // Default image if none exists
     }
 }
 
@@ -60,18 +46,17 @@ if (isset($_POST['user_update'])) {
         $update_image_extension = pathinfo($update_image_name, PATHINFO_EXTENSION);
 
         // Generate a unique file name
-        $s3_key = 'user_images/' . uniqid('IMG_', true) . '.' . $update_image_extension;
+        $filename = uniqid('IMG_', true) . '.' . $update_image_extension;
 
         try {
             // Upload data to S3
             $result = $s3->putObject([
                 'Bucket' => S3_BUCKET,
-                'Key'    => $s3_key,
+                'Key'    => '/users_area/user_images/' . $filename,
                 'SourceFile' => $update_image_tmp,
-                'ACL'    => 'public-read', // Adjust as needed
             ]);
 
-            $update_image = $s3_key; // Use S3 key for storing in database
+            $update_image = $filename;
 
         } catch (AwsException $e) {
             // Output error message if fails

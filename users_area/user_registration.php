@@ -9,10 +9,6 @@ require_once __DIR__ . '/../vendor/autoload.php';
 use Aws\S3\S3Client;
 use Aws\Exception\AwsException;
 
-// Define AWS configuration constants
-define('AWS_REGION', 'us-east-1'); // Replace with your AWS region
-define('S3_BUCKET', 'your-s3-bucket-name'); // Replace with your S3 bucket name
-
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -126,27 +122,24 @@ if (isset($_POST['user_register'])) {
         $user_image_extension = pathinfo($user_image_name, PATHINFO_EXTENSION);
 
         // Generate a unique file name
-        $s3_key = 'user_images/' . uniqid('IMG_', true) . '.' . $user_image_extension;
+        $filename = uniqid('IMG_', true) . '.' . $user_image_extension;
 
         try {
             // Upload data to S3
             $result = $s3->putObject([
                 'Bucket' => S3_BUCKET,
-                'Key'    => $s3_key,
-                'SourceFile' => $user_image_tmp
+                'Key'    => '/users_area/user_images/' . $filename,
+                'SourceFile' => $user_image_tmp,
             ]);
-
-            // Get the URL of the uploaded image
-            $user_image_url = $result['ObjectURL'];
 
             // Insert user into database
             $insert_query = "INSERT INTO `user_table` (username, user_email, user_password, user_image, user_ip, user_address, user_mobile) VALUES (?, ?, ?, ?, ?, ?, ?)";
             $stmt = mysqli_prepare($con, $insert_query);
-            mysqli_stmt_bind_param($stmt, 'sssssss', $user_username, $user_email, $hash_password, $s3_key, $user_ip, $user_address, $user_mobile);
+            mysqli_stmt_bind_param($stmt, 'sssssss', $user_username, $user_email, $hash_password, $filename, $user_ip, $user_address, $user_mobile);
             $insert_result = mysqli_stmt_execute($stmt);
 
             if ($insert_result) {
-                echo "<script>alert('Registration successful');</script>";
+                echo "<script>alert('User Registration Successful!');</script>";
                 $_SESSION['username'] = $user_username;
                 echo "<script>window.open('../index.php', '_self');</script>";
             } else {

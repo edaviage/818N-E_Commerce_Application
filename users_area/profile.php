@@ -3,12 +3,6 @@ include("../includes/connect.php");
 include_once("../includes/session_handler.php");
 include("../functions/common_functions.php");
 
-// Include the AWS SDK for PHP
-require_once __DIR__ . '/../vendor/autoload.php';
-
-use Aws\S3\S3Client;
-use Aws\Exception\AwsException;
-
 if (!isset($_SESSION['username'])) {
     header('location:user_login.php');
 }
@@ -144,26 +138,16 @@ if (!isset($_SESSION['username'])) {
                         $stmt->execute();
                         $select_user_img_result = $stmt->get_result();
                         $row_user_img = $select_user_img_result->fetch_assoc();
-                        $userImgKey = $row_user_img['user_image'];
+                        $user_image_key = $row_user_img['user_image'];
 
-                        // Generate the image URL directly from S3
-                        $s3 = new S3Client([
-                            'version' => 'latest',
-                            'region'  => AWS_REGION,
-                        ]);
-
-                        $cmd = $s3->getCommand('GetObject', [
-                            'Bucket' => S3_BUCKET,
-                            'Key'    => $userImgKey,
-                        ]);
-
-                        $request = $s3->createPresignedRequest($cmd, '+20 minutes');
-
-                        // Get the pre-signed URL
-                        $userImgUrl = (string)$request->getUri();
+                        if ($user_image_key) {
+                            $user_image_url = '/users_area/user_images/' . urlencode($user_image_key);
+                        } else {
+                            $user_image_url = '/users_area/user_images/profile.png'; // Default image if none exists
+                        }
 
                         echo "<li class='nav-item d-flex align-items-center gap-2'>
-                                    <img src='$userImgUrl' alt='$username photo' class='img-profile img-thumbnail'/>
+                                    <img src='$user_image_url' alt='$username photo' class='img-profile img-thumbnail'/>
                                   </li>";
                         ?>
                         <li class="nav-item d-flex align-items-center gap-2">
