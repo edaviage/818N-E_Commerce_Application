@@ -87,7 +87,7 @@ use Aws\Exception\AwsException;
                             $user_image_url = 'path/to/default/image.jpg'; // Default image if error occurs
                         }
                     } else {
-                        $user_image_url = 'path/to/default/image.jpg'; // Default image if none exists
+                        $user_image_url = './user_images/profile.png'; // Default image if none exists
                     }
 
                     echo "
