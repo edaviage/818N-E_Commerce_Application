@@ -39,8 +39,14 @@ if (isset($_POST['user_update'])) {
     $update_address = $_POST['user_address'];
     $update_mobile = $_POST['user_mobile'];
 
+    // Handle image upload to S3
     if (isset($_FILES['user_image']) && $_FILES['user_image']['name'] != '') {
-        // Handle image upload to S3
+        // Instantiate the S3 client
+        $s3 = new S3Client([
+            'version' => 'latest',
+            'region'  => AWS_REGION,
+        ]);
+
         $update_image_tmp = $_FILES['user_image']['tmp_name'];
         $update_image_name = $_FILES['user_image']['name'];
         $update_image_extension = pathinfo($update_image_name, PATHINFO_EXTENSION);
