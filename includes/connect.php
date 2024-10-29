@@ -1,9 +1,14 @@
 <?php
+        require __DIR__ . '/../vendor/autoload.php';
+        use Dotenv\Dotenv;
+        $dotenv = Dotenv::createImmutable(__DIR__ . '/..');
+        $dotenv->load();
+
         // Use the dynamically injected values for RDS connection
-        $servername = getenv('RDS_HOST') ?: 'localhost';
-        $username = getenv('RDS_USER') ?: 'root';
-        $password = getenv('RDS_PASSWORD') ?: '';
-        $dbname = getenv('RDS_DBNAME') ?: 'ecommerce_1';
+        $servername = $_ENV['RDS_HOST'] ?: 'localhost';
+        $username = $_ENV['RDS_USER']?: 'root';
+        $password = $_ENV['RDS_PASSWORD'] ?: '';
+        $dbname = $_ENV['RDS_DBNAME'] ?: 'ecommerce_1';
 
         // Create connection
 
