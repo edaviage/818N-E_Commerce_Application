@@ -2,6 +2,7 @@
 include("../includes/connect.php");
 include("../functions/common_functions.php");
 session_start();
+global $cdn='https://d2egrbjmr3tvi4.cloudfront.net/'; 
 if (isset($_GET['order_id'])) {
     $order_id = $_GET['order_id'];
     $select_order_query = "SELECT * FROM `user_orders` WHERE order_id = '$order_id'";
@@ -34,8 +35,8 @@ if(isset($_POST['confirm_payment'])){
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Payment Page</title>
-    <link rel="stylesheet" href="../assets/css/bootstrap.css" />
-    <link rel="stylesheet" href="../assets/css/main.css" />
+    <link rel="stylesheet" href=<?php echo "$cdn/assets/css/bootstrap.css"; ?> />
+    <link rel="stylesheet" href=<?php echo "$cdn/assets/css/main.css"; ?> />
 </head>
 
 <body>
@@ -73,7 +74,7 @@ if(isset($_POST['confirm_payment'])){
             </div>
         </div>
     </div>
-    <script src="../assets/js/bootstrap.bundle.js"></script>
+    <script src=<?php echo "$cdn/assets/js/bootstrap.bundle.js" ?> ></script>
 </body>
 
 </html>

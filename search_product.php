@@ -2,6 +2,7 @@
 include("./includes/connect.php");
 include("./functions/common_functions.php");
 session_start();
+global $cdn='https://d2egrbjmr3tvi4.cloudfront.net/'; 
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -10,8 +11,8 @@ session_start();
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Ecommerce Products</title>
-    <link rel="stylesheet" href="./assets/css/bootstrap.css" />
-    <link rel="stylesheet" href="./assets/css/main.css" />
+    <link rel="stylesheet" href=<?php echo "$cdn/assets/css/bootstrap.css"; ?> />
+    <link rel="stylesheet" href=<?php echo "$cdn/assets/css/main.css"; ?> />
 </head>
 
 <body>
@@ -206,7 +207,7 @@ session_start();
     </div> -->
     <!-- End Footer -->
 
-    <script src="./assets//js/bootstrap.bundle.js"></script>
+    <script src=<?php echo "$cdn/assets/js/bootstrap.bundle.js" ?> ></script>
 </body>
 
 </html>

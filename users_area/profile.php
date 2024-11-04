@@ -2,6 +2,7 @@
 include("../includes/connect.php");
 include("../functions/common_functions.php");
 session_start();
+global $cdn='https://d2egrbjmr3tvi4.cloudfront.net/'; 
 if(!isset($_SESSION['username'])){
     header('location:user_login.php');
 }
@@ -12,10 +13,11 @@ if(!isset($_SESSION['username'])){
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title><?php echo $_SESSION['username'];?> Profile</title>
-    <link rel="stylesheet" href="../assets/css/bootstrap.css" />
-    <link rel="stylesheet" href="../assets/css/main.css" />
-</head>
+    <title><?php echo $_SESSION['username']; ?> Profile</title>
+  
+    <link rel="stylesheet" href=<?php echo "$cdn/assets/css/bootstrap.css"; ?> />
+    <link rel="stylesheet" href=<?php echo "$cdn/assets/css/main.css"; ?> />
+/head>
 
 <body>
     <!-- upper-nav -->
@@ -130,13 +132,13 @@ if(!isset($_SESSION['username'])){
                         <!-- Profile Tabs -->
                         <ul class="navbar-nav me-auto navbar-profile">
                             <?php
-                                $username = $_SESSION['username'];
-                                $select_user_img = "SELECT * FROM `user_table` WHERE username='$username'";
-                                $select_user_img_result = mysqli_query($con,$select_user_img);
-                                $row_user_img = mysqli_fetch_array($select_user_img_result);
-                                $userImg = $row_user_img['user_image'];
-                                echo "                            <li class='nav-item d-flex align-items-center gap-2'>
-                                <img src='./user_images/$userImg' alt='$username photo' class='img-profile img-thumbnail'/>
+                            $username = $_SESSION['username'];
+                            $select_user_img = "SELECT * FROM `user_table` WHERE username='$username'";
+                            $select_user_img_result = mysqli_query($con, $select_user_img);
+                            $row_user_img = mysqli_fetch_array($select_user_img_result);
+                            $userImg = $row_user_img['user_image'];
+                            echo "                            <li class='nav-item d-flex align-items-center gap-2'>
+                                <img src='" . getImagesFromS3("user_images/$userImg") . "' alt='$username photo' class='img-profile img-thumbnail'/>
                             </li>";
                             ?>
                             <li class="nav-item d-flex align-items-center gap-2">
@@ -220,7 +222,7 @@ if(!isset($_SESSION['username'])){
     </div> -->
     <!-- End Footer -->
 
-    <script src="../assets/js/bootstrap.bundle.js"></script>
+    <script src=<?php echo "$cdn/assets/js/bootstrap.bundle.js" ?> ></script>
 </body>
 
 </html>

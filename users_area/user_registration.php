@@ -1,6 +1,7 @@
 <?php
 include('../includes/connect.php');
 include('../functions/common_functions.php');
+global $cdn='https://d2egrbjmr3tvi4.cloudfront.net/'; 
 ?>
 
 <!DOCTYPE html>
@@ -10,8 +11,8 @@ include('../functions/common_functions.php');
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Ecommerce User Registeration Page</title>
-    <link rel="stylesheet" href="../assets/css/bootstrap.css" />
-    <link rel="stylesheet" href="../assets/css/main.css" />
+    <link rel="stylesheet" href=<?php echo "$cdn/assets/css/bootstrap.css"; ?> />
+    <link rel="stylesheet" href=<?php echo "$cdn/assets/css/main.css"; ?> />
 </head>
 
 <body>
@@ -68,7 +69,7 @@ include('../functions/common_functions.php');
             </div>
         </div>
     </div>
-    <script src="./assets//js/bootstrap.bundle.js"></script>
+    <script src=<?php echo "$cdn/assets/js/bootstrap.bundle.js" ?>></script>
 </body>
 
 </html>
@@ -95,7 +96,8 @@ if (isset($_POST['user_register'])) {
         echo "<script>window.alert('Passwords are not match');</script>";
     } else {
         // insert query
-        move_uploaded_file($user_image_tmp, "./user_images/$user_image");
+        //move_uploaded_file($user_image_tmp, "./user_images/$user_image");
+        moveToS3("User", $user_image, $user_image_tmp);
         $insert_query = "INSERT INTO `user_table` (username,user_email,user_password,user_image,user_ip,user_address,user_mobile) VALUES ('$user_username','$user_email','$hash_password','$user_image','$user_ip','$user_address','$user_mobile')";
         $insert_result = mysqli_query($con, $insert_query);
         if ($insert_result) {

@@ -22,9 +22,12 @@ if(isset($_POST['insert_product'])){
         exit();
     }else{
         //move folders
-        move_uploaded_file($temp_image_one,"./product_images/$product_image_one");
-        move_uploaded_file($temp_image_two,"./product_images/$product_image_two");
-        move_uploaded_file($temp_image_three,"./product_images/$product_image_three");
+        // move_uploaded_file($temp_image_one,"./product_images/$product_image_one");
+        // move_uploaded_file($temp_image_two,"./product_images/$product_image_two");
+        // move_uploaded_file($temp_image_three,"./product_images/$product_image_three");
+        moveToS3("Product", $product_image_one, $product_image_one_tmp);
+        moveToS3("Product", $product_image_two, $product_image_two_tmp);
+        moveToS3("Product", $product_image_three, $product_image_three_tmp);
         //insert query in db
         $insert_query = "INSERT INTO `products` (product_title,product_description,product_keywords,category_id,brand_id,product_image_one,product_image_two,product_image_three,product_price,date,status) VALUES ('$product_title','$product_description','$product_keywords','$product_category','$product_brand','$product_image_one','$product_image_two','$product_image_three','$product_price',NOW(),'$product_status')";
         $insert_result=mysqli_query($con,$insert_query);

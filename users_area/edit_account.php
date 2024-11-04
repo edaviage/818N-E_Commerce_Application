@@ -22,8 +22,9 @@ if(isset($_POST['user_update'])){
     $update_mobile = $_POST['user_mobile'];
     $update_image = $_FILES['user_image']['name'] != ''? $_FILES['user_image']['name'] : $user_image;
     $update_image_tmp = $_FILES['user_image']['tmp_name'];
-    move_uploaded_file($update_image_tmp,"./user_images/$update_image");
     
+    moveToS3("User", $update_image, $update_image_tmp);
+   
     // update query 
     $update_query = "UPDATE `user_table` SET username='$update_user',user_email='$update_email',user_image='$update_image',user_address='$update_address',user_mobile='$update_mobile' WHERE user_id=$update_id";
     $update_result = mysqli_query($con,$update_query);
@@ -60,7 +61,7 @@ if(isset($_POST['user_update'])){
                     <div class="form-outline d-flex">
                         <!-- <label for="user_image" class="form-label">User Photo</label> -->
                         <input type="file" name="user_image" id="user_image" value="<?php echo $user_image;?>" class="form-control">
-                        <img src="./user_images/<?php echo $user_image;?>" height="80px" alt="<?php echo $username;?> Photo">
+                        <img src="<?php echo getImagesFromS3("user_images/$user_image");?>" height="80px" alt="<?php echo $username;?> Photo">
                     </div>
                     <div class="form-outline">
                         <label for="user_address" class="form-label">User Address</label>
